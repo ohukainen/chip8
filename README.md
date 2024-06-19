@@ -1,11 +1,14 @@
 # emulator-lib-chip8
-This project will build an emulator for the Chip-8. This is done primarily to learn about how CPU:s. 
+This project will build an emulator for the Chip-8. This is done as a preparation before creating a Game Boy emulator. 
 
 # Author
 Johannes Källstad [email](johannes.kallstad@gmail.com) [github](https://github.com/Ohukainen)
 
+# Dependencies
+- [CMake](https://cmake.org/)
+
 # Build
-This project uses CMake to manage build. 
+This project uses CMake. 
 
 To setup the build run:
 ```
