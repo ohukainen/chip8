@@ -9,6 +9,9 @@ set(EXECUTABLE_NAME chip8)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+
 add_library(${PROJECT_NAME} 
     src/chip8.cpp
 
@@ -29,6 +32,7 @@ target_include_directories(${EXECUTABLE_NAME} PUBLIC
 
 target_link_libraries(${EXECUTABLE_NAME} 
     ${PROJECT_NAME}
+    ${SDL2_LIBRARIES}
 )
 
 target_compile_options(${EXECUTABLE_NAME} PRIVATE -Wall -Wextra -Wpedantic)
