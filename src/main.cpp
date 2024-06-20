@@ -32,7 +32,6 @@ int main(int argc, char** argv) {
             game.drawScreen(chip8.getScreenState());
         }
         
-        // TODO: make handleEvents take keyboard input
         chip8.setKeys(game.handleEvents());
     }
     return 0;
