@@ -15,7 +15,6 @@ void Chip8::initialize() {
  
     mGraphix.fill(0);
     mStack.fill(0);
-    mVReg.fill(0);
     mMemory.fill(0);
 
     int start = 0x50;
@@ -296,8 +295,8 @@ void Chip8::emulateCycle() {
                     break;
 
                 case 0x0033: // FX33: Stores BCD of VX in memory addresses I to I + 2 
-                    mMemory[mIndexRegistry] = mVReg[(mOpcode & 0x0F00) >> 8] % 100;
-                    mMemory[mIndexRegistry + 1] = (mVReg[(mOpcode & 0x0F00) >> 8] - (100 * mMemory[mIndexRegistry])) % 10;
+                    mMemory[mIndexRegistry] = mVReg[(mOpcode & 0x0F00) >> 8] / 100;
+                    mMemory[mIndexRegistry + 1] = (mVReg[(mOpcode & 0x0F00) >> 8] - (100 * mMemory[mIndexRegistry])) / 10;
                     mMemory[mIndexRegistry + 2] = mVReg[(mOpcode & 0x0F00) >> 8] - ((100 * mMemory[mIndexRegistry]) + (10 * mMemory[mIndexRegistry + 1]));
 
                     mProgramCounter += 2;
