@@ -1,36 +1,39 @@
+#include "game.hpp"
+
 #include <SDL.h>
 #include <chip8.hpp>
 #include <iostream>
 
 int main(int argc, char** argv) {
-    Chip8 chip8;
-    bool running = true;
+    if (argc > 2) {
+        std::cout << "To many arguments";
+    }
+    else if (argc < 2) {
+        std::cout << "To few arguments";
+    }
 
-    // TODO: set up graphics system with SDL 
-    // TODO: setup keyboard input handling 
-
-    if (argc != 1) {
-        std::cout << "The program don't support input right now, please don't provide any" << std::endl;
+    if (argc != 2) {
+        std::cout << ", usage: 'chip8 <filepath>" << std::endl;
         return 0;
     }
-    std::cout << "Started emulator: " << argv[0] << std::endl;
+    std::string gameFilepath = argv[1];
 
+    Game game(gameFilepath);
+
+    Chip8 chip8;
     chip8.initialize();
+
+    chip8.loadGame(gameFilepath);
     
-    // TODO: LoadGame with reference to input
-    // chip8.loadGame("game.rom");
-    
-    while (running) {
+    while (game.isRunning()) {
         chip8.emulateCycle();
 
         if (chip8.getDrawFlag()) {
-            // TODO: Update the screen
+            game.drawScreen(chip8.getScreenState());
         }
-       
-        //TODO: get keyState from input handling and notify chip8
-        // chip8.setKeys(keyState);
-        running = false;
+        
+        // TODO: make handleEvents take keyboard input
+        chip8.setKeys(game.handleEvents());
     }
-    std::cin.get();
     return 0;
 }

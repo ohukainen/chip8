@@ -24,6 +24,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 add_executable(${EXECUTABLE_NAME}
     src/main.cpp
+    src/game.cpp
+
+    include/game.hpp
 )
 
 target_include_directories(${EXECUTABLE_NAME} PUBLIC 

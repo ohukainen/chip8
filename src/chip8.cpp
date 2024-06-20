@@ -7,7 +7,6 @@
 #include <random>
 
 void Chip8::initialize() {
-    std::cout << "Initializing Chip-8 emulator" << std::endl;
     mProgramCounter = 0x200; 
     mOpcode = 0;    
     mIndexRegistry = 0;      
@@ -19,7 +18,6 @@ void Chip8::initialize() {
     mMemory.fill(0);
 
     int start = 0x50;
-    std::cout << "Loading font into memory, starting at address: " << start << std::endl;
     for (const auto & i : fontset) {
       mMemory[start++] = fontset[i];		
     }
@@ -29,6 +27,9 @@ void Chip8::initialize() {
 }
 
 void Chip8::loadGame(const std::string& gameFilepath) {
+    if (gameFilepath == "test") {
+        return;
+    }
     std::fstream fs(gameFilepath, std::ios::binary);
     
     char data;
@@ -296,8 +297,8 @@ void Chip8::emulateCycle() {
                     break;
 
                 case 0x0033: // FX33: Stores BCD of VX in memory addresses I to I + 2 
-                    mMemory[mIndexRegistry] = mVReg[(mOpcode & 0x0F00) >> 8] % 100;
-                    mMemory[mIndexRegistry + 1] = (mVReg[(mOpcode & 0x0F00) >> 8] - (100 * mMemory[mIndexRegistry])) % 10;
+                    mMemory[mIndexRegistry] = mVReg[(mOpcode & 0x0F00) >> 8] / 100;
+                    mMemory[mIndexRegistry + 1] = (mVReg[(mOpcode & 0x0F00) >> 8] - (100 * mMemory[mIndexRegistry])) / 10;
                     mMemory[mIndexRegistry + 2] = mVReg[(mOpcode & 0x0F00) >> 8] - ((100 * mMemory[mIndexRegistry]) + (10 * mMemory[mIndexRegistry + 1]));
 
                     mProgramCounter += 2;
@@ -346,6 +347,10 @@ void Chip8::setKeys(const std::array<bool, 16>& keyState) {
 
 bool Chip8::getDrawFlag() const {
     return mDrawFlag;
+}
+
+const std::array<Byte, 64 * 32>& Chip8::getScreenState() const {
+    return mGraphix;
 }
 
 Byte Chip8::randomNumber() {
