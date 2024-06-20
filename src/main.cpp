@@ -16,46 +16,23 @@ int main(int argc, char** argv) {
         std::cout << ", usage: 'chip8 <filepath>" << std::endl;
         return 0;
     }
-    std::cout << "Started emulator: " << argv[0] << std::endl;
+    std::string gameFilepath = argv[1];
 
-    Game game(argv[1]);
+    Game game(gameFilepath);
 
     Chip8 chip8;
     chip8.initialize();
 
-    std::array<uint8_t, 64 * 32> screenState;
-    screenState.fill(0);
-    
-    int comp = 1;
-    for (int i = 0; i < 64 * 32; i++) {
-        if ( i % 64 == 0) {
-            if (comp == 1) {
-                comp = 0;
-            }
-            else {
-                comp = 1;
-            }
-        }
-        if (i % 2 == comp) {
-            screenState[i] = 0;
-        }
-        else {
-            screenState[i] = 1;
-        }
-    }
-
-    // TODO: LoadGame with reference to input
-    // chip8.loadGame("game.rom");
-            game.drawScreen(screenState);
+    chip8.loadGame(gameFilepath);
     
     while (game.isRunning()) {
-        // chip8.emulateCycle();
+        chip8.emulateCycle();
 
-        // if (chip8.getDrawFlag()) {
-        // }
+        if (chip8.getDrawFlag()) {
+            game.drawScreen(chip8.getScreenState());
+        }
         
-        game.handleEvents();
-        // chip8.setKeys(keyState);
+        chip8.setKeys(game.handleEvents());
     }
     return 0;
 }

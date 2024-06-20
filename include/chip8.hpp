@@ -14,9 +14,9 @@ public:
 
     void emulateCycle();
     void setKeys(const std::array<bool, 16>& keyState);
-   
 
     bool getDrawFlag() const;
+    const std::array<Byte, 64 * 32>& getScreenState() const;
 private:
     Byte randomNumber();
 

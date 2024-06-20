@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SDL.h>
-#include <SDL_render.h>
+#include <cstdint>
 #include <string>
 
 class Game {
@@ -9,8 +9,8 @@ public:
     Game(const std::string& title);
     ~Game();
     
-    void handleEvents(); 
-    void drawScreen(std::array<uint8_t, 64 * 32> screenState);
+    std::array<bool, 16> handleEvents(); 
+    void drawScreen(const std::array<uint8_t, 64 * 32>& screenState);
     
     bool isRunning();
 private: 

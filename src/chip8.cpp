@@ -7,7 +7,6 @@
 #include <random>
 
 void Chip8::initialize() {
-    std::cout << "Initializing Chip-8 emulator" << std::endl;
     mProgramCounter = 0x200; 
     mOpcode = 0;    
     mIndexRegistry = 0;      
@@ -15,10 +14,10 @@ void Chip8::initialize() {
  
     mGraphix.fill(0);
     mStack.fill(0);
+    mVReg.fill(0);
     mMemory.fill(0);
 
     int start = 0x50;
-    std::cout << "Loading font into memory, starting at address: " << start << std::endl;
     for (const auto & i : fontset) {
       mMemory[start++] = fontset[i];		
     }
@@ -28,6 +27,9 @@ void Chip8::initialize() {
 }
 
 void Chip8::loadGame(const std::string& gameFilepath) {
+    if (gameFilepath == "test") {
+        return;
+    }
     std::fstream fs(gameFilepath, std::ios::binary);
     
     char data;
@@ -345,6 +347,10 @@ void Chip8::setKeys(const std::array<bool, 16>& keyState) {
 
 bool Chip8::getDrawFlag() const {
     return mDrawFlag;
+}
+
+const std::array<Byte, 64 * 32>& Chip8::getScreenState() const {
+    return mGraphix;
 }
 
 Byte Chip8::randomNumber() {

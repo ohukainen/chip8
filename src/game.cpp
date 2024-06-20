@@ -1,13 +1,13 @@
 #include "game.hpp"
 
+#include <SDL_render.h>
+#include <SDL_video.h>
 #include <iostream>
 #include <array>
 
 Game::Game(const std::string& title) :
-mFPS(60), mWidth(640), mHeight(320)
+mIsRunning(false), mFPS(60), mWidth(640), mHeight(320)
 {
-    mIsRunning = false;
-
     mWindowP = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWidth, mHeight, SDL_WINDOW_SHOWN);
     if (mWindowP == NULL) {
         std::cout << "Window could not be created, SDL_Error: " << SDL_GetError() << std::endl;
@@ -36,11 +36,12 @@ mFPS(60), mWidth(640), mHeight(320)
 Game::~Game() {
     SDL_DestroyRenderer(mRendererP);
     SDL_DestroyWindow(mWindowP);
+    SDL_DestroyTexture(mTextureP);
 
     SDL_Quit();
 }
 
-void Game::handleEvents() {
+std::array<bool, 16> Game::handleEvents() {
     SDL_Event event;
     SDL_PollEvent(&event);
     
@@ -52,31 +53,32 @@ void Game::handleEvents() {
         default: 
             break;
     }
+    
+    return std::array<bool, 16>();
 }
 
-void Game::drawScreen(std::array<uint8_t, 64 * 32> screenState) {
-    SDL_RenderClear(mRendererP);
-
-    int x;
-    int y;
-    int screenX;    
-    int screenY; 
-    std::array<uint32_t, 640 * 320> argbPixels;
+void Game::drawScreen(const std::array<uint8_t, 64 * 32>& screenState) {
+    int sdl2X;
+    int sdl2Y;
+    int chip8Col;    
+    int chip8Row; 
+    std::array<uint32_t, 640 * 320> sdl2Pixels;
     
     for (int pixel = 0; pixel < 640 * 320; pixel++) {
-        x = pixel % mWidth;
-        y = pixel / mWidth;
-        screenX = x / 10;    
-        screenY = y / 10;
-        if (screenState[screenX + (screenY * 64)] != 0) {
-            argbPixels[x + (y * mWidth)] = 0xFFFFFFFF; // White (ARGB: 255, 255, 255, 255)
+        sdl2X = pixel % mWidth;
+        sdl2Y = pixel / mWidth;
+        chip8Col = sdl2X / 10;    
+        chip8Row = sdl2Y / 10;
+        if (screenState[chip8Col + (chip8Row * 64)] != 0) {
+            sdl2Pixels[sdl2X + (sdl2Y * mWidth)] = 0xFFFFFFFF; // White (ARGB: 255, 255, 255, 255)
         } 
         else {
-            argbPixels[x + (y * mWidth)] = 0xFF000000; // Black (ARGB: 255, 0, 0, 0)
+            sdl2Pixels[sdl2X + (sdl2Y * mWidth)] = 0xFF000000; // Black (ARGB: 255, 0, 0, 0)
         }
     }
 
-    SDL_UpdateTexture(mTextureP, NULL, argbPixels.data(), mWidth * sizeof(uint32_t));
+    SDL_RenderClear(mRendererP);
+    SDL_UpdateTexture(mTextureP, NULL, sdl2Pixels.data(), mWidth * sizeof(uint32_t));
     SDL_RenderCopy(mRendererP, mTextureP, NULL, NULL);
     SDL_RenderPresent(mRendererP);
     SDL_DestroyTexture(mTextureP);
