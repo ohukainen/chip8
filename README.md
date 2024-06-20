@@ -10,19 +10,22 @@ Johannes Källstad [email](johannes.kallstad@gmail.com) [github](https://github.
 # Build
 This project uses CMake. 
 
-To setup the build run:
+Setup build with (optional in parentheses):
 ```
-cmake -S . -B build
+cmake -S . -B build (-G <Generator>) 
 ```
 
-This will setup the build source (-S) as the current directory and the build target (-B) as a folder called build.
-
-When the build is setup the project can be built by running:
+Build with:
 ```
 cmake --build build
 ```
 
-And installed from the build folder by running 
+Install with:
 ```
 cmake --install build
 ```
+
+# Sources 
+- [Chip-8 wikipedia page](https://en.wikipedia.org/wiki/CHIP-8)
+- [Writing a Chip-8 emulator](https://aymanbagabas.com/blog/2018/09/17/chip-8-emulator.html) by Ayman Bagabas
+- [How to write an emulator](https://multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/) by Laurence Muller
