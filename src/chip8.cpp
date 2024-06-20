@@ -13,18 +13,19 @@ void Chip8::initialize() {
     mIndexRegistry = 0;      
     mStackP = 0;      
  
-    // TODO: clear display	
-    // TODO: clear stack
-    // TODO: clear registers V0-VF
-    // TODO: clear memory
- 
+    mGraphix.fill(0);
+    mStack.fill(0);
+    mVReg.fill(0);
+    mMemory.fill(0);
+
     int start = 0x50;
     std::cout << "Loading font into memory, starting at address: " << start << std::endl;
     for (const auto & i : fontset) {
       mMemory[start++] = fontset[i];		
     }
 
-    // TODO: reset timers
+    mDelayTimer = 0;
+    mSoundTimer = 0;
 }
 
 void Chip8::loadGame(const std::string& gameFilepath) {
@@ -40,6 +41,7 @@ void Chip8::loadGame(const std::string& gameFilepath) {
 void Chip8::emulateCycle() {
     mOpcode = mMemory[mProgramCounter] << 8 | mMemory[mProgramCounter+ 1];
 
+    mDrawFlag = false;
     switch (mOpcode & 0xF000) {    
         case 0x0000:
             switch (mOpcode & 0x000F) {
@@ -51,7 +53,7 @@ void Chip8::emulateCycle() {
                     break;
 
                 case 0x000E: // 00EE: Returns from subroutine
-                    mProgramCounter = mStack[mStackP--] + 2;
+                    mProgramCounter = mStack[--mStackP] + 2;
                     break;
 
                 default:
@@ -64,7 +66,7 @@ void Chip8::emulateCycle() {
             break;
              
         case 0x2000: // 2NNN: Calls subroutine at NNN 
-            mStack[mStackP++ + 1] = mProgramCounter;
+            mStack[mStackP++] = mProgramCounter;
 
             mProgramCounter = mOpcode & 0x0FFF;
             break;
