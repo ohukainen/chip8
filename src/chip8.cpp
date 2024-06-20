@@ -4,6 +4,7 @@
 #include <ios>
 #include <iostream>
 #include <fstream>
+#include <random>
 
 void Chip8::initialize() {
     std::cout << "Initializing Chip-8 emulator" << std::endl;
@@ -18,7 +19,7 @@ void Chip8::initialize() {
     // TODO: clear memory
  
     int start = 0x50;
-    std::cout << "Loading font into memory, starting at adress: " << start << std::endl;
+    std::cout << "Loading font into memory, starting at address: " << start << std::endl;
     for (const auto & i : fontset) {
       mMemory[start++] = fontset[i];		
     }
@@ -43,8 +44,8 @@ void Chip8::emulateCycle() {
         case 0x0000:
             switch (mOpcode & 0x000F) {
                 case 0x0000: // 00E0: Clears the screen
-                    mGraphix.fill(0);
                     mDrawFlag = true;
+                    mGraphix.fill(0);
 
                     mProgramCounter += 2;
                     break;
@@ -70,29 +71,26 @@ void Chip8::emulateCycle() {
              
         case 0x3000: // 3XNN: Skips next instruction if VX == NN 
             if (mVReg[(mOpcode & 0x0F00) >> 8] == (mOpcode & 0x00FF)) {
-                mProgramCounter += 4;
-            }
-            else {
                 mProgramCounter += 2;
             }
+
+            mProgramCounter += 2;
             break;
              
-        case 0x4000: // 3XNN: Skips next instruction if VX != NN 
+        case 0x4000: // 4XNN: Skips next instruction if VX != NN 
             if (mVReg[(mOpcode & 0x0F00) >> 8] != (mOpcode & 0x00FF)) {
-                mProgramCounter += 4;
-            }
-            else {
                 mProgramCounter += 2;
             }
+
+            mProgramCounter += 2;
             break;
              
         case 0x5000: // 5XY0: Skips next instruction if VX == VY 
             if (mVReg[(mOpcode & 0x0F00) >> 8] == mVReg[(mOpcode & 0x00F0) >> 4]) {
-                mProgramCounter += 4;
-            }
-            else {
                 mProgramCounter += 2;
             }
+           
+            mProgramCounter += 2;
             break;
              
         case 0x6000: // 6XNN: Sets VX to NN 
@@ -115,19 +113,19 @@ void Chip8::emulateCycle() {
                     mProgramCounter += 2;
                     break;
 
-                case 0x0001: // 8XY1: Sets VX to VX OR VY (bitwise OR)
+                case 0x0001: // 8XY1: Sets VX to VX OR VY 
                     mVReg[(mOpcode & 0x0F00) >> 8] |= mVReg[(mOpcode & 0x00F0) >> 4];
                     
                     mProgramCounter += 2;
                     break;
 
-                case 0x0002: // 8XY2: Sets VX to VX AND VY (bitwise AND)
+                case 0x0002: // 8XY2: Sets VX to VX AND VY 
                     mVReg[(mOpcode & 0x0F00) >> 8] &= mVReg[(mOpcode & 0x00F0) >> 4];
 
                     mProgramCounter += 2;
                     break;
 
-                case 0x0003: // 8XY3: Sets VX to VX XOR VY (bitwise XOR)
+                case 0x0003: // 8XY3: Sets VX to VX XOR VY 
                     mVReg[(mOpcode & 0x0F00) >> 8] ^= mVReg[(mOpcode & 0x00F0) >> 4];
 
                     mProgramCounter += 2;
@@ -189,36 +187,139 @@ void Chip8::emulateCycle() {
              
         case 0x9000: // 9XY0: Skips next instruction if VX != VY  
             if (mVReg[(mOpcode & 0x0F00) >> 8] != mVReg[(mOpcode & 0x00F0) >> 4]) {
-                mProgramCounter += 4;
-            }
-            else {
                 mProgramCounter += 2;
             }
+           
+            mProgramCounter += 2;
             break;
 
         case 0xA000: // ANNN: Sets index registry to the address NNN
             mIndexRegistry = mOpcode & 0x0FFF;
+
             mProgramCounter += 2;
             break;
              
-        case 0xB000: // XXXX: description
-            // TODO
+        case 0xB000: // BNNN: Jumps to the address NNN + V0 
+            mProgramCounter = (mOpcode & 0x0FFF) + mVReg[0];
             break;
              
-        case 0xC000: // XXXX: description
-            // TODO
+        case 0xC000: // CXNN: Sets VX to NN AND random number (0-255)
+            mVReg[(mOpcode & 0x0F00) >> 8] = (mOpcode & 0x00FF) & randomNumber(); 
+
+            mProgramCounter += 2;
             break;
              
-        case 0xD000: // XXXX: description
-            // TODO
+        case 0xD000: // DXYN: Draws sprite with height N in memory location I at position (X, Y) and sets VF to 1 on collision
+            mDrawFlag = true;
+
+            mVReg[15] = 0;   
+            for (int row = 0; row < (mOpcode & 0x000F); row++) {
+                for (int bit = 0; bit < 8; bit++) {
+                    if ((mMemory[mIndexRegistry + row] & (0x0080 >> bit)) != 0) {
+                        if (mGraphix[mVReg[(mOpcode & 0x0F00) >> 8] + bit + (((mVReg[mOpcode & 0x00F0] >> 4) + row) * 64)] == 1) {
+                            mVReg[15] = 1;
+                        }
+                        mGraphix[mVReg[(mOpcode & 0x0F00) >> 8] + bit + (((mVReg[mOpcode & 0x00F0] >> 4) + row) * 64)] ^= 1;
+                    }
+                }
+            }
+
+            mProgramCounter += 2;
             break;
              
-        case 0xE000: // XXXX: description
-            // TODO
+        case 0xE000: 
+            switch (mOpcode & 0x000F) {
+                case 0x000E: // EX9E: Skips next instruction if key X is pressed 
+                    if (mKeys[(mOpcode & 0x0F00) >> 8] == true) {
+                        mProgramCounter += 2;
+                    }
+
+                    mProgramCounter += 2;
+                    break;
+
+                case 0x0001: // EXA1: Skips next instruction if key X is not pressed 
+                    if (mKeys[(mOpcode & 0x0F00) >> 8] == false) {
+                        mProgramCounter += 2;
+                    }
+
+                    mProgramCounter += 2;
+                    break;
+
+                default:
+                    std::cout << std::hex << "Unknown opcode: " << mOpcode << std::endl;
+            }
             break;
              
-        case 0xF000: // XXXX: description
-            // TODO
+        case 0xF000: 
+            switch (mOpcode & 0x00FF) {
+                case 0x0007: // FX07: sets VX to the delay timers value
+                    mVReg[(mOpcode & 0x0F00) >> 8] = mDelayTimer;
+
+                    mProgramCounter += 2;
+                    break;
+
+                case 0x000A: // FX0A: Waits for input and sets VX to the pressed key
+                    for (uint64_t i = 0; i < mKeys.size(); i++) {
+                        if (mKeys[i] == true) {
+                            mVReg[(mOpcode & 0x0F00) >> 8] = i;
+
+                            mProgramCounter += 2;
+                            break;
+                        }
+                    }
+                    break;
+
+                case 0x0015: // FX15: Sets delay timer to VX
+                    mDelayTimer = mVReg[(mOpcode & 0x0F00) >> 8];
+
+                    mProgramCounter += 2;
+                    break;
+
+                case 0x0018: // FX18: Sets the sound tumer to VX 
+                    mSoundTimer = mVReg[(mOpcode & 0x0F00) >> 8];
+
+                    mProgramCounter += 2;
+                    break;
+
+                case 0x001E: // FX1E: Adds VX to I
+                    mIndexRegistry += mVReg[(mOpcode & 0x0F00) >> 8];
+
+                    mProgramCounter += 2;
+                    break;
+
+                case 0x0029: // FX29: Sets I to the memory address of font for character X
+                    mIndexRegistry = 0x50 + (5 * mVReg[(mOpcode & 0x0F00) >> 8]);
+
+                    mProgramCounter += 2;
+                    break;
+
+                case 0x0033: // FX33: Stores BCD of VX in memory addresses I to I + 2 
+                    mMemory[mIndexRegistry] = mVReg[(mOpcode & 0x0F00) >> 8] % 100;
+                    mMemory[mIndexRegistry + 1] = (mVReg[(mOpcode & 0x0F00) >> 8] - (100 * mMemory[mIndexRegistry])) % 10;
+                    mMemory[mIndexRegistry + 2] = mVReg[(mOpcode & 0x0F00) >> 8] - ((100 * mMemory[mIndexRegistry]) + (10 * mMemory[mIndexRegistry + 1]));
+
+                    mProgramCounter += 2;
+                    break;
+
+                case 0x0055: // FX55: Stores from V0 to VX into memory starting at address I 
+                    for (int i = 0; i <= mVReg[(mOpcode & 0x0F00) >> 8]; i++) {
+                        mMemory[mIndexRegistry + i] = mVReg[i];
+                    }
+
+                    mProgramCounter += 2;
+                    break;
+
+                case 0x0065: // FX65: Fills from V0 to VX from memory starting at address I 
+                    for (int i = 0; i <= mVReg[(mOpcode & 0x0F00) >> 8]; i++) {
+                         mVReg[i] = mMemory[mIndexRegistry + i];
+                    }
+
+                    mProgramCounter += 2;
+                    break;
+
+                default:
+                    std::cout << std::hex << "Unknown opcode: " << mOpcode << std::endl;
+            }
             break;
 
         default:
@@ -237,10 +338,18 @@ void Chip8::emulateCycle() {
     }  
 }
 
-void Chip8::setKeys(const std::array<Byte, 16>& keyState) {
+void Chip8::setKeys(const std::array<bool, 16>& keyState) {
     mKeys = keyState; 
 }
 
 bool Chip8::getDrawFlag() const {
     return mDrawFlag;
+}
+
+Byte Chip8::randomNumber() {
+    std::random_device randomDevice;    
+    std::mt19937 generator(randomDevice());
+    std::uniform_int_distribution<> distribution(0,255);
+
+    return distribution(generator);
 }
