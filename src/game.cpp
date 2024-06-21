@@ -1,7 +1,5 @@
 #include "game.hpp"
 
-#include <SDL_render.h>
-#include <SDL_video.h>
 #include <iostream>
 #include <array>
 
@@ -120,11 +118,11 @@ std::array<bool, 16> Game::handleEvents() {
                     break;
             }
             break;
-        default: 
-                break;
-    }
 
-    return std::array<bool, 16>();
+        default: 
+            break;
+    }
+    return keyState;
 }
 
 void Game::drawScreen(const std::array<uint8_t, 64 * 32>& screenState) {

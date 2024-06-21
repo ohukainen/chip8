@@ -30,7 +30,7 @@ void Chip8::loadGame(const std::string& gameFilepath) {
     if (gameFilepath == "test") {
         return;
     }
-    std::fstream fs(gameFilepath, std::ios::binary);
+    std::fstream fs(gameFilepath, std::ios::binary| std::ios::in);
     
     char data;
     int i = 0;
@@ -40,7 +40,7 @@ void Chip8::loadGame(const std::string& gameFilepath) {
 }
 
 void Chip8::emulateCycle() {
-    mOpcode = mMemory[mProgramCounter] << 8 | mMemory[mProgramCounter+ 1];
+    mOpcode = mMemory[mProgramCounter] << 8 | mMemory[mProgramCounter + 1];
 
     mDrawFlag = false;
     switch (mOpcode & 0xF000) {    
