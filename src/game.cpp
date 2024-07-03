@@ -4,7 +4,7 @@
 #include <array>
 
 Game::Game(const std::string& title) :
-mIsRunning(false), mFPS(60), mWidth(640), mHeight(320) // TODO: make windowsize dynamic
+mIsRunning(false), mWidth(640), mHeight(320) // TODO: make windowsize dynamic
 {
     mWindowP = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWidth, mHeight, SDL_WINDOW_SHOWN);
     if (mWindowP == NULL) {

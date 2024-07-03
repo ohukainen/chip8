@@ -41,10 +41,10 @@ target_link_libraries(${EXECUTABLE_NAME}
 target_compile_options(${EXECUTABLE_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 
-#option(BUILD_TESTING "Building tests" ON)
-#if (BUILD_TESTING)
-#    add_subdirectory(tests)
-#endif() 
+option(BUILD_TESTING "Building tests" ON)
+if (BUILD_TESTING)
+    add_subdirectory(tests)
+endif() 
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/install/bin)
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/install/bin)

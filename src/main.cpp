@@ -26,12 +26,15 @@ int main(int argc, char** argv) {
     chip8.loadGame(gameFilepath);
     
     while (game.isRunning()) {
-        chip8.emulateCycle();
-
-        if (chip8.getDrawFlag()) {
-            game.drawScreen(chip8.getScreenState());
-        }
+        Word operationCode = chip8.fetchNextOperationCode();
+        chip8.executeOperationCode(operationCode);
         
+        if (chip8.getDrawFlag()) {
+            game.drawScreen(chip8.getGraphix());
+        }
+
+        game.handleEvents();
+
         chip8.setKeys(game.handleEvents());
     }
     return 0;

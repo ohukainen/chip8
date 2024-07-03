@@ -15,7 +15,6 @@ public:
     bool isRunning();
 private: 
     bool mIsRunning;
-    const int mFPS;
     const int mWidth;
     const int mHeight;
 
