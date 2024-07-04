@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <array>
-
+// tesing
 Game::Game(const std::string& title) :
 mIsRunning(false), mWidth(640), mHeight(320) // TODO: make windowsize dynamic
 {
