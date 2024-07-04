@@ -11,7 +11,7 @@ class Chip8 {
 public:
     void initialize();   
     void loadGame(const std::string& gameFilepath);
-
+    
     Word fetchNextOperationCode();
     void executeOperationCode(Word operationCode);
     void setKeys(const std::array<bool, 16>& keyState);
@@ -32,13 +32,14 @@ public:
     const std::array<bool, 16>& getKeys() const;         
 
     bool getDrawFlag() const;
+
 private:
     std::array<Byte, 4096> mMemory;     // Memory 
     std::array<Byte, 64 * 32> mGraphix; // Pixels on the screen 
 
     Word mProgramCounter;               // Program counter 
     Word mIndexRegistry;                // Index registry
-    std::array<Byte, 16> mVReg;         // V registry
+    std::array<Byte, 16> mV;            // V registry
 
     Byte mDelayTimer;                   // Timer for delay
     Byte mSoundTimer;                   // Timer for sound      

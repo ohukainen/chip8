@@ -93,4 +93,8 @@ TEST_CASE("Operation codes") {
         REQUIRE(chip8.getProgramCounter() == programCounter + 4);
         
     }
+
+    SECTION("7XNN: Adds NN to VX (carry flag is not changed)") {
+        
+    }
 }
