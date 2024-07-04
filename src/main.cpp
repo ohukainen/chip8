@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <chip8.hpp>
 #include <iostream>
+#include <string>
 
 int main(int argc, char** argv) {
     if (argc > 2) {
@@ -27,6 +28,8 @@ int main(int argc, char** argv) {
         std::cout << "Game to large!" << std::endl;
         return 0;
     }
+
+    std::array<bool, 16> keyState = chip8.getKeys();
     
     while (game.isRunning()) {
         Word operationCode = chip8.fetchNextOperationCode();
@@ -35,10 +38,14 @@ int main(int argc, char** argv) {
         if (chip8.getDrawFlag()) {
             game.drawScreen(chip8.getGraphix());
         }
+        
+        game.handleEvents(keyState);
 
-        game.handleEvents();
-
-        chip8.setKeys(game.handleEvents());
+        chip8.setKeys(keyState);
+        int i = 0;
+        for (auto b : keyState) {
+            std::cout << std::to_string(i) << " is: " << std::to_string(b) << std::endl;
+        }
     }
     return 0;
 }
