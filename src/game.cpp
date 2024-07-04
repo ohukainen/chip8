@@ -145,11 +145,10 @@ void Game::drawScreen(const std::array<uint8_t, 64 * 32>& screenState) {
         }
     }
 
-    SDL_RenderClear(mRendererP);
     SDL_UpdateTexture(mTextureP, NULL, sdl2Pixels.data(), mWidth * sizeof(uint32_t));
+    SDL_RenderClear(mRendererP);
     SDL_RenderCopy(mRendererP, mTextureP, NULL, NULL);
     SDL_RenderPresent(mRendererP);
-    SDL_DestroyTexture(mTextureP);
 }
 
 bool Game::isRunning() {

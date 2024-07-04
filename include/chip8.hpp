@@ -10,7 +10,7 @@ using Word = uint16_t;
 class Chip8 {
 public:
     void initialize();   
-    void loadGame(const std::string& gameFilepath);
+    bool loadGame(const std::string& gameFilepath);
     
     Word fetchNextOperationCode();
     void executeOperationCode(Word operationCode);

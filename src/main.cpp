@@ -23,7 +23,10 @@ int main(int argc, char** argv) {
     Chip8 chip8;
     chip8.initialize();
 
-    chip8.loadGame(gameFilepath);
+    if (!chip8.loadGame(gameFilepath)) {
+        std::cout << "Game to large!" << std::endl;
+        return 0;
+    }
     
     while (game.isRunning()) {
         Word operationCode = chip8.fetchNextOperationCode();
