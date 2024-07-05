@@ -51,19 +51,6 @@ bool Chip8::loadGame(const std::string& gameFilepath) {
     return true;
 }
 
-bool Chip8::loadGame(const std::vector<Byte>& gameInstructions) {
-    int i = 0;
-
-    for (const Byte& byte : gameInstructions) {
-        if (0x200 + i > 4096) {
-            return false;
-        }
-        mMemory[0x200 + i] = byte;
-        i++;
-    }
-    return true;
-}
-
 void Chip8::emulateCycle() {
     Word operationCode = mMemory[mProgramCounter] << 8 | mMemory[mProgramCounter + 1];
     mDrawFlag = false;

@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <array>
-#include <vector>
 #include <string>
 
 using Byte = uint8_t;
@@ -12,7 +11,6 @@ class Chip8 {
 public:
     void initialize();   
     bool loadGame(const std::string& gameFilepath);
-    bool loadGame(const std::vector<Byte>& gameInstructions);
     
     void emulateCycle();
     void setKeys(const std::array<bool, 16>& keyState);
