@@ -1,10 +1,13 @@
 #include "game.hpp"
+#include "KEYMAP.hpp"
 
+#include <SDL_events.h>
+#include <cstdint>
 #include <iostream>
 #include <array>
 
 Game::Game(const std::string& title) :
-mIsRunning(false), mFPS(60), mWidth(640), mHeight(320) // TODO: make windowsize dynamic
+mIsRunning(false), mWidth(640), mHeight(320) 
 {
     mWindowP = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWidth, mHeight, SDL_WINDOW_SHOWN);
     if (mWindowP == NULL) {
@@ -39,90 +42,27 @@ Game::~Game() {
     SDL_Quit();
 }
 
-std::array<bool, 16> Game::handleEvents() {
+void Game::handleEvents(std::array<bool, 16>& keyState) {
     SDL_Event event;
     SDL_PollEvent(&event);
-    std::array<bool, 16> keyState{false};
     
-    switch (event.type) {
-        case SDL_QUIT: 
-            mIsRunning = false;
-            break;
-        case SDL_KEYDOWN:
-            switch (event.key.keysym.sym) {
-                case SDLK_1:
-                    keyState[0] = true;
-                    break;
-
-                case SDLK_2:
-                    keyState[1] = true;
-                    break;
-
-                case SDLK_3:
-                    keyState[2] = true;
-                    break;
-
-                case SDLK_4:
-                    keyState[12] = true;
-                    break;
-
-                case SDLK_q:
-                    keyState[3] = true;
-                    break;
-
-                case SDLK_w:
-                    keyState[4] = true;
-                    break;
-
-                case SDLK_e:
-                    keyState[5] = true;
-                    break;
-
-                case SDLK_r:
-                    keyState[13] = true;
-                    break;
-
-                case SDLK_a:
-                    keyState[6] = true;
-                    break;
-
-                case SDLK_s:
-                    keyState[7] = true;
-                    break;
-
-                case SDLK_d:
-                    keyState[8] = true;
-                    break;
-
-                case SDLK_f:
-                    keyState[14] = true;
-                    break;
-
-                case SDLK_z:
-                    keyState[10] = true;
-                    break;
-
-                case SDLK_x:
-                    keyState[9] = true;
-                    break;
-
-                case SDLK_c:
-                    keyState[11] = true;
-                    break;
-
-                case SDLK_v:
-                    keyState[15] = true;
-                    break;
-
-                default:
-                    break;
-            }
-            break;
-
-        default: 
-            break;
+    if (event.type == SDL_QUIT) {
+        mIsRunning = false;
     }
-    return keyState;
+    if (event.type == SDL_KEYDOWN) {
+        for (const auto & [keyCode, button] : KEYMAP) {
+            if (event.key.keysym.sym == keyCode) {
+                keyState[button] = true;
+            }
+        }
+    }
+    if (event.type == SDL_KEYUP) {
+        for (const auto & [keyCode, button] : KEYMAP) {
+            if (event.key.keysym.sym == keyCode) {
+                keyState[button] = false;
+            }
+        }
+    }
 }
 
 void Game::drawScreen(const std::array<uint8_t, 64 * 32>& screenState) {
@@ -145,11 +85,10 @@ void Game::drawScreen(const std::array<uint8_t, 64 * 32>& screenState) {
         }
     }
 
-    SDL_RenderClear(mRendererP);
     SDL_UpdateTexture(mTextureP, NULL, sdl2Pixels.data(), mWidth * sizeof(uint32_t));
+    SDL_RenderClear(mRendererP);
     SDL_RenderCopy(mRendererP, mTextureP, NULL, NULL);
     SDL_RenderPresent(mRendererP);
-    SDL_DestroyTexture(mTextureP);
 }
 
 bool Game::isRunning() {

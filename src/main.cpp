@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <chip8.hpp>
 #include <iostream>
+#include <string>
 
 int main(int argc, char** argv) {
     if (argc > 2) {
@@ -23,16 +24,23 @@ int main(int argc, char** argv) {
     Chip8 chip8;
     chip8.initialize();
 
-    chip8.loadGame(gameFilepath);
+    if (!chip8.loadGame(gameFilepath)) {
+        std::cout << "Game to large!" << std::endl;
+        return 0;
+    }
+
+    std::array<bool, 16> keyState = chip8.getKeys();
     
     while (game.isRunning()) {
         chip8.emulateCycle();
-
+        
         if (chip8.getDrawFlag()) {
-            game.drawScreen(chip8.getScreenState());
+            game.drawScreen(chip8.getGraphix());
         }
         
-        chip8.setKeys(game.handleEvents());
+        game.handleEvents(keyState);
+
+        chip8.setKeys(keyState);
     }
     return 0;
 }

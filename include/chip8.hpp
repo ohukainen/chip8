@@ -10,23 +10,35 @@ using Word = uint16_t;
 class Chip8 {
 public:
     void initialize();   
-    void loadGame(const std::string& gameFilepath);
-
+    bool loadGame(const std::string& gameFilepath);
+    
     void emulateCycle();
     void setKeys(const std::array<bool, 16>& keyState);
+    
+    const std::array<Byte, 4096>& getMemory() const;
+    const std::array<Byte, 64 * 32>& getGraphix() const;
+
+    Word getProgramCounter() const;
+    Word getIndexRegistry() const;
+
+    const std::array<Byte, 16>& getVReg() const;
+    Byte getDelayTimer() const;
+    Byte getSoundTimer() const;
+
+    const std::array<Word, 16>& getStack() const;
+    Word getStackP() const;
+
+    const std::array<bool, 16>& getKeys() const;         
 
     bool getDrawFlag() const;
-    const std::array<Byte, 64 * 32>& getScreenState() const;
-private:
-    Byte randomNumber();
 
+private:
     std::array<Byte, 4096> mMemory;     // Memory 
     std::array<Byte, 64 * 32> mGraphix; // Pixels on the screen 
 
-    Word mOpcode;                       // Operation code 
     Word mProgramCounter;               // Program counter 
     Word mIndexRegistry;                // Index registry
-    std::array<Byte, 16> mVReg;         // V registry
+    std::array<Byte, 16> mV;            // V registry
 
     Byte mDelayTimer;                   // Timer for delay
     Byte mSoundTimer;                   // Timer for sound      
