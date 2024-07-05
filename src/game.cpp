@@ -1,4 +1,5 @@
 #include "game.hpp"
+#include "KEYMAP.hpp"
 
 #include <SDL_events.h>
 #include <cstdint>
@@ -6,7 +7,7 @@
 #include <array>
 
 Game::Game(const std::string& title) :
-mIsRunning(false), mWidth(640), mHeight(320) // TODO: make windowsize dynamic
+mIsRunning(false), mWidth(640), mHeight(320) 
 {
     mWindowP = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWidth, mHeight, SDL_WINDOW_SHOWN);
     if (mWindowP == NULL) {
@@ -49,103 +50,17 @@ void Game::handleEvents(std::array<bool, 16>& keyState) {
         mIsRunning = false;
     }
     if (event.type == SDL_KEYDOWN) {
-        if (SDLK_1 == event.key.keysym.sym) {
-            keyState[1] = true;
-        }
-        if (SDLK_2 == event.key.keysym.sym) {
-            keyState[2] = true;
-        }
-        if (SDLK_3 == event.key.keysym.sym) {
-            keyState[3] = true;
-        }
-        if (SDLK_4 == event.key.keysym.sym) {
-            keyState[12] = true;
-        }
-        if (SDLK_q == event.key.keysym.sym) {
-            keyState[4] = true;
-        }
-        if (SDLK_w == event.key.keysym.sym) {
-            keyState[5] = true;
-        }
-        if (SDLK_e == event.key.keysym.sym) {
-            keyState[6] = true;
-        }
-        if (SDLK_r == event.key.keysym.sym) {
-            keyState[13] = true;
-        }
-        if (SDLK_a == event.key.keysym.sym) {
-            keyState[7] = true;
-        }
-        if (SDLK_s == event.key.keysym.sym) {
-            keyState[8] = true;
-        }
-        if (SDLK_d == event.key.keysym.sym) {
-            keyState[9] = true;
-        }
-        if (SDLK_f == event.key.keysym.sym) {
-            keyState[14] = true;
-        }
-        if (SDLK_z == event.key.keysym.sym) {
-            keyState[10] = true;
-        }
-        if (SDLK_x == event.key.keysym.sym) {
-            keyState[0] = true;
-        }
-        if (SDLK_c == event.key.keysym.sym) {
-            keyState[11] = true;
-        }
-        if (SDLK_v == event.key.keysym.sym) {
-            keyState[15] = true;
+        for (const auto & [keyCode, button] : KEYMAP) {
+            if (event.key.keysym.sym == keyCode) {
+                keyState[button] = true;
+            }
         }
     }
     if (event.type == SDL_KEYUP) {
-        if (SDLK_1 == event.key.keysym.sym) {
-            keyState[1] = false;
-        }
-        if (SDLK_2 == event.key.keysym.sym) {
-            keyState[2] = false;
-        }
-        if (SDLK_3 == event.key.keysym.sym) {
-            keyState[3] = false;
-        }
-        if (SDLK_4 == event.key.keysym.sym) {
-            keyState[12] = false;
-        }
-        if (SDLK_q == event.key.keysym.sym) {
-            keyState[4] = false;
-        }
-        if (SDLK_w == event.key.keysym.sym) {
-            keyState[5] = false;
-        }
-        if (SDLK_e == event.key.keysym.sym) {
-            keyState[6] = false;
-        }
-        if (SDLK_r == event.key.keysym.sym) {
-            keyState[13] = false;
-        }
-        if (SDLK_a == event.key.keysym.sym) {
-            keyState[7] = false;
-        }
-        if (SDLK_s == event.key.keysym.sym) {
-            keyState[8] = false;
-        }
-        if (SDLK_d == event.key.keysym.sym) {
-            keyState[9] = false;
-        }
-        if (SDLK_f == event.key.keysym.sym) {
-            keyState[14] = false;
-        }
-        if (SDLK_z == event.key.keysym.sym) {
-            keyState[10] = false;
-        }
-        if (SDLK_x == event.key.keysym.sym) {
-            keyState[0] = false;
-        }
-        if (SDLK_c == event.key.keysym.sym) {
-            keyState[11] = false;
-        }
-        if (SDLK_v == event.key.keysym.sym) {
-            keyState[15] = false;
+        for (const auto & [keyCode, button] : KEYMAP) {
+            if (event.key.keysym.sym == keyCode) {
+                keyState[button] = false;
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ add_library(${PROJECT_NAME}
     src/chip8.cpp
 
     include/chip8.hpp
+    include/FONTSET.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
@@ -27,6 +28,7 @@ add_executable(${EXECUTABLE_NAME}
     src/game.cpp
 
     include/game.hpp
+    include/KEYMAP.hpp
 )
 
 target_include_directories(${EXECUTABLE_NAME} PUBLIC 
@@ -40,11 +42,6 @@ target_link_libraries(${EXECUTABLE_NAME}
 
 target_compile_options(${EXECUTABLE_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
-
-option(BUILD_TESTING "Building tests" ON)
-if (BUILD_TESTING)
-    add_subdirectory(tests)
-endif() 
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/install/bin)
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/install/bin)

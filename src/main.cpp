@@ -32,8 +32,7 @@ int main(int argc, char** argv) {
     std::array<bool, 16> keyState = chip8.getKeys();
     
     while (game.isRunning()) {
-        Word operationCode = chip8.fetchNextOperationCode();
-        chip8.executeOperationCode(operationCode);
+        chip8.emulateCycle();
         
         if (chip8.getDrawFlag()) {
             game.drawScreen(chip8.getGraphix());
@@ -42,10 +41,6 @@ int main(int argc, char** argv) {
         game.handleEvents(keyState);
 
         chip8.setKeys(keyState);
-        int i = 0;
-        for (auto b : keyState) {
-            std::cout << std::to_string(i) << " is: " << std::to_string(b) << std::endl;
-        }
     }
     return 0;
 }

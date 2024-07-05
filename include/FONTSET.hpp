@@ -1,6 +1,11 @@
 #pragma once
 
-const unsigned char fontset[80] =
+#include <array>
+#include <cstdint>
+
+using Byte = uint8_t;
+
+const std::array<Byte, 80> FONTSET =
 { 
   0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
   0x20, 0x60, 0x20, 0x20, 0x70, // 1
