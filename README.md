@@ -31,10 +31,22 @@ Run a game with:
 chip8 <filepath> [fps=60]
 ```
 The arguments are:
-- filepath: <required>  path to the game binary (absolute or relative)" 
-- fps:      [optonal]   fps of the game (30 <= fps <= 1000)" 
+- filepath: <required>  path to the game binary (absolute or relative)
+- fps:      [optonal]   fps of the game (30 <= fps <= 1000) 
 
 Arguments in <> are required and arguments in [] are optional.
+
+## Key Map 
+Chip8             Keyboard
++-+-+-+-+         +-+-+-+-+
+|1|2|3|C|         |1|2|3|4|
++-+-+-+-+         +-+-+-+-+
+|4|5|6|D|         |Q|W|E|R|
++-+-+-+-+   =>    +-+-+-+-+
+|7|8|9|E|         |A|S|D|F|
++-+-+-+-+         +-+-+-+-+
+|A|0|B|F|         |Z|X|C|V|
++-+-+-+-+         +-+-+-+-+
 
 # Sources 
 - [Chip-8 wikipedia page](https://en.wikipedia.org/wiki/CHIP-8)
