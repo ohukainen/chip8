@@ -9,7 +9,7 @@ using Word = uint16_t;
 
 class Chip8 {
 public:
-    void initialize();   
+    void initialize(const uint64_t ticksPerSecond);   
     bool loadGame(const std::string& gameFilepath);
     
     void emulateCycle();
@@ -35,6 +35,7 @@ public:
 private:
     std::array<Byte, 4096> mMemory;     // Memory 
     std::array<Byte, 64 * 32> mGraphix; // Pixels on the screen 
+    uint64_t mTicksPerSecond;
 
     Word mProgramCounter;               // Program counter 
     Word mIndexRegistry;                // Index registry

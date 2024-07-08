@@ -16,7 +16,7 @@ static Byte randomNumber() {
     return distribution(generator);
 }
 
-void Chip8::initialize() {
+void Chip8::initialize(uint64_t ticksPerSecond) {
     mProgramCounter = 0x200; 
     mIndexRegistry = 0;      
     mStackP = 0;      
@@ -31,13 +31,14 @@ void Chip8::initialize() {
     for (const auto & byte : FONTSET) {
         mMemory[start++] = byte;		
     }
-
+    
+    mTicksPerSecond = ticksPerSecond;
     mDelayTimer = 0;
     mSoundTimer = 0;
 }
 
 bool Chip8::loadGame(const std::string& gameFilepath) {
-    std::fstream fs(gameFilepath, std::ios::binary| std::ios::in);
+    std::ifstream fs(gameFilepath, std::ios::binary| std::ios::in);
     char data;
     int i = 0;
     
@@ -440,7 +441,7 @@ void Chip8::emulateCycle() {
         --mSoundTimer;
     } 
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000/60));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000/mTicksPerSecond));
 }
 
 void Chip8::setKeys(const std::array<bool, 16>& keyState) {
