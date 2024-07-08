@@ -37,6 +37,7 @@ The arguments are:
 Arguments in <> are required and arguments in [] are optional.
 
 ## Key Map 
+```
 Chip8             Keyboard
 +-+-+-+-+         +-+-+-+-+
 |1|2|3|C|         |1|2|3|4|
@@ -47,6 +48,7 @@ Chip8             Keyboard
 +-+-+-+-+         +-+-+-+-+
 |A|0|B|F|         |Z|X|C|V|
 +-+-+-+-+         +-+-+-+-+
+```
 
 # Sources 
 - [Chip-8 wikipedia page](https://en.wikipedia.org/wiki/CHIP-8)
